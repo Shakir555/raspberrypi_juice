@@ -3,7 +3,6 @@
 # Author: Shakir Salam [shakirsalam555@Gmail.com]
 
 # Libraries
-include "basemq.h"
 from machine import Pin, ADC
 from micropython import const, utime
 from math import exp, log
