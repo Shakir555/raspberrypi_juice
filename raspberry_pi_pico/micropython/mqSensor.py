@@ -1,25 +1,34 @@
 # Reference Author: Igor Dementiev TroykaMQ
 # Reference Author: Alexay Tveritinov [kartun@yandex.ru]
 # Author: Shakir Salam [shakirsalam555@Gmail.com]
+from basemq import BaseMQ 
+from micropython import const
 
-# Libraries
-from mq2 import MQ2
-import utime
+class MQ2(BaseMQ):
+	# Clean air coefficient
+	MQ2_RO_BASE = float(9.83)
 
-# GPIO Initialization
-pin = 26
-sensor = MQ2(pinData = pin, baseVoltage = 3.3)
+	def __init__(self, pinData, pinHeater=-1, boardResistance = 10, baseVoltage = 3.3, measuringStrategy = BaseMQ.STRATEGY_ACCURATE):
+		# Call superclass to fill attributes
+		super().__init__(pinData, pinHeater, boardResistance, baseVoltage, measuringStrategy)
+		pass
 
-# Calibration
-print("Calibrating")
-sensor.calibrate()
-print("Calibration Completed")
-print("Base Resistance:{0}".format(sensor._ro))
+	# Measure liquefied hydrocarbon gas, LPG
+	def readLPG(self):
+		return self.readScaled(-0.45, 2.95)
+		
+	# Measure methane	
+	def readMethane(self):
+		return self.readScaled(-0.38, 3.21)
 
-# MQ2 Sensor Reading Value
-while True:
-    print("Smoke: {:.1f}".format(sensor.readSmoke()) + " - ", end = "")
-    print("LPG: {:.1f}".format(sensor.readLPG()) + " - ", end = "")
-    print("Methane: {:.1f}".format(sensor.readMethane()) + " - ", end = "")
-    print("Hydrogen: {:.1f}".format(sensor.readHydrogen()))
-    utime.sleep(0.5)
+	# Measure smoke
+	def readSmoke(self):
+		return self.readScaled(-0.42, 3.54)
+
+	# Measure hydrogen
+	def readHydrogen(self):
+		return self.readScaled(-0.48, 3.32)
+
+    # Base RO differs for every sensor family
+	def getRoInCleanAir(self):
+		return self.MQ2_RO_BASE
