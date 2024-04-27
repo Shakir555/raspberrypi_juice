@@ -96,13 +96,11 @@ class BaseMQ(object):
         self._heater = True
         self._prMillis = utime.ticks_ms()
 
-
     # Move heater to energy saving mode. Is not applicable for 3-wire setup
     def heaterPwrLow(self):
         self._heater = True
         self._cooler = True
         self._prMillis = utime.ticks_ms()
-
 
     # Turn off heater. Is not applicable for 3-wire setup
     def heaterPwrOff(self):
@@ -177,10 +175,8 @@ class BaseMQ(object):
             print("Cool sensor")
     #endif #MQDEBUG
             return False
-
         elif self.coolanceCompleted():
             self.heaterPwrOff()
             return True
-
         else:
             return False
